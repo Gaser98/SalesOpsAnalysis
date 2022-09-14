@@ -1,0 +1,18 @@
+/* Calculate number of visits per Agent*/
+select agent_id ,count(visit_date)over(PARTITION by agent_id)as visit_count
+from visits
+order by 1;
+/*Calculate number of visited retailers per Agent */
+select agent_id,retailer_id,count(visits_created)over(PARTITION by agent_id)as visits_count
+from visitsxorders
+group by retailer_id
+order by agent_id;
+/*unique % of visits*/
+select agent_id,count(visits_created) over(PARTITION by retailer_id) as visits_count
+from visitsxorders
+group by agent_id
+order by agent_id;
+/*Calculate orders, retailers and Net sales per type per Agent*/
+select retailer_type,retailer_id,agent_id, sum(order_price)over(PARTITION by agent_id,retailer_type)as net_Sales,count(sales_order_id)over(PARTITION by agent_id,retailer_type) as orders_count
+from visitsxorders
+group by 3,2;
